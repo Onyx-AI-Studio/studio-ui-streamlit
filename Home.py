@@ -1,0 +1,65 @@
+import streamlit as st
+import pandas as pd
+import numpy as np
+import time
+
+st.title("🎬 Generative AI Studio")
+
+st.header("Initialize System")
+with st.form("input_form"):
+    st.subheader("Input and Output Configuration")
+
+    input_output_container = st.container()
+
+    with input_output_container:
+        input_col, output_col = st.columns(2)
+        with input_col:
+            input_type = st.radio("Supported input types:", ["Plain Text", "Audio", "PDF", "Text File"])
+
+        with output_col:
+            output_type = st.radio("Supported output types:", ["Plain Text", "Audio"])
+
+    st.subheader("LLM Configuration")
+    llm = st.selectbox("Pick any of the available large language models:",
+                       ["bigscience/bloomz-560m", "google/flan-t5-xl", "bigscience/bloomz-3b", "bigscience/bloomz-7b",
+                        "llama-7b", "vicuna-13b", "other"])
+
+    temp_llm = llm
+    if llm == "other":
+        temp_llm = "other"
+        llm = st.text_input("LLM name from Huggingface:")
+
+    stt_model = ""
+    stt_features = ""
+    if input_type == "Audio":
+        st.subheader("Deepgram STT Configuration")
+        stt_model = st.radio("Please select the STT model from Deepgram:", ["Nova", "Whisper"])
+
+        stt_features = st.multiselect("Pick any of the additional features:",
+                                      ["Diarization", "Punctuation", "Topic Detection", "Keyword Extraction"])
+
+    # FIXME: logical flow to handle all scenarios
+    submitted = st.form_submit_button("Validate and Set")
+    if submitted and temp_llm == "other":
+        # st.write("Please specify a valid model!")
+        st.info("Please specify a valid model...!")
+    elif submitted and input_type == "audio":
+        # st.write("Please specify the STT engine!")
+        st.info("Please specify the STT engine!")
+    elif submitted and llm != "other" and (input_type == "audio" and stt_model != ""):
+        # st.write("Config initialized!")
+        st.success("Config initialized!")
+    else:
+        st.write()
+
+# st.divider()
+st.header("JSON Config:")
+config = {
+    'input_type': input_type,
+    'output_type': output_type,
+    'llm_selected': llm,
+    'stt_model': stt_model,
+    'stt_features': stt_features,
+}
+st.session_state['config'] = config
+st.write(config)
