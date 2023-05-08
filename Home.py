@@ -32,7 +32,7 @@ with st.form("input_form"):
         stt_features = st.multiselect("Pick any of the additional features:",
                                       ["Diarization", "Punctuation", "Topic Detection", "Keyword Extraction"])
 
-    submitted = st.form_submit_button("Validate and Set")
+    submitted = st.form_submit_button("Validate and Set Input Config")
     if submitted and input_type == 'audio':
         st.warning("Please specify additional information")
     elif submitted:
@@ -41,7 +41,7 @@ with st.form("input_form"):
 with st.form("llm_form"):
     st.subheader("LLM Configuration")
     llm = st.selectbox("Pick any of the available large language models:",
-                       ["bigscience/bloomz-560m", "google/flan-t5-xl", "bigscience/bloomz-3b", "bigscience/bloomz-7b",
+                       ["google/flan-t5-large", "bigscience/bloomz-560m", "bigscience/bloomz-1b1", "bigscience/bloomz-3b", "bigscience/bloomz-7b",
                         "llama-7b", "vicuna-13b", "other"])
 
     temp_llm = llm
@@ -50,7 +50,7 @@ with st.form("llm_form"):
         llm = st.text_input("LLM name from Huggingface:")
 
     # FIXME: logical flow to handle all scenarios
-    submitted = st.form_submit_button("Validate and Set")
+    submitted = st.form_submit_button("Validate and Set Model Config")
     if submitted and temp_llm == "other":
         # st.write("Please specify a valid model!")
         st.info("Please specify a valid model...!")
