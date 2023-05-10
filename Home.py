@@ -38,7 +38,7 @@ with st.form("input_form"):
 with st.form("llm_form"):
     st.subheader("LLM Configuration")
     llm = st.selectbox("Pick any of the available large language models:",
-                       ["google/flan-t5-large", "bigscience/bloomz-560m", "bigscience/bloomz-1b1", "bigscience/bloomz-3b", "bigscience/bloomz-7b",
+                       ["google/flan-t5-base", "google/flan-t5-large", "bigscience/bloomz-560m", "bigscience/bloomz-1b1", "bigscience/bloomz-3b", "bigscience/bloomz-7b",
                         "llama-7b", "vicuna-13b", "other"])
 
     temp_llm = llm
@@ -72,5 +72,5 @@ config = {
 st.session_state['config'] = config
 
 # debug logs
-st.header("JSON Config:")
-st.write(config)
+# st.header("JSON Config:")
+# st.write(config)
