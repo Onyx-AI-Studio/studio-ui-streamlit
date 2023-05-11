@@ -24,10 +24,11 @@ with st.form("input_form"):
         # TODO:
         #  Add config for the models like tiny or large for Whisper
         #  Add config for Nova - Enhanced
-        stt_model = st.radio("Please select the STT model from Deepgram:", ["Deepgram Nova", "OpenAI Whisper"])
+        stt_model = st.radio("Please select the STT model from Deepgram:", ["Deepgram Nova", "Deepgram Whisper [OpenAI]"])
 
         stt_features = st.multiselect("Pick any of the additional features:",
-                                      ["Diarization", "Punctuation", "Topic Detection", "Keyword Extraction"])
+                                      ["Smart Format", "Diarization", "Punctuation", "Topic Detection",
+                                       "Keyword Extraction"])
 
     submitted = st.form_submit_button("Validate and Set Input Config")
     if submitted and input_type == 'audio':
@@ -38,7 +39,8 @@ with st.form("input_form"):
 with st.form("llm_form"):
     st.subheader("LLM Configuration")
     llm = st.selectbox("Pick any of the available large language models:",
-                       ["google/flan-t5-base", "google/flan-t5-large", "bigscience/bloomz-560m", "bigscience/bloomz-1b1", "bigscience/bloomz-3b", "bigscience/bloomz-7b",
+                       ["google/flan-t5-base", "google/flan-t5-large", "bigscience/bloomz-560m",
+                        "bigscience/bloomz-1b1", "bigscience/bloomz-3b", "bigscience/bloomz-7b",
                         "llama-7b", "vicuna-13b", "other"])
 
     temp_llm = llm
