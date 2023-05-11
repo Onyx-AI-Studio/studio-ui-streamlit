@@ -33,18 +33,18 @@ def load_data(llm_selected):
 
 def get_llm_predictions(utterance: str):
     print(f"Getting response from LLM for the input: {input_}")
-    response = call_studio_handler(utterance)['result']
+    response = call_studio_handler(utterance, config["llm_selected"])['result']
     print("Done!")
     return response
 
 
 @st.cache_resource
-def call_studio_handler(utterance):
+def call_studio_handler(utterance: str, llm_selected: str):
     url = "http://localhost:5999/studio_handler"
     payload = json.dumps({
         "input_type": config["input_type"],
         "output_type": config["output_type"],
-        "llm_selected": config["llm_selected"],
+        "llm_selected": llm_selected,
         "utterance": utterance,
     })
     headers = {
