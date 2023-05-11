@@ -34,6 +34,8 @@ def load_data(llm_selected):
 def get_llm_predictions(utterance: str):
     print(f"Getting response from LLM for the input: {input_}")
     response = call_studio_handler(utterance, config["llm_selected"])['result']
+    if utterance in response:
+        response = str(response).replace(utterance, "")
     print("Done!")
     return response
 
@@ -56,10 +58,11 @@ def call_studio_handler(utterance: str, llm_selected: str):
 
 
 if config['input_type'] == "Plain Text" and config['output_type'] == "Plain Text":
-    st.subheader(f"Model Selected: ```{config['llm_selected']}```")
-    input_ = st.text_area("Input", height=300)
+    st.subheader(f"Model selected: ```{config['llm_selected']}```")
+    input_ = st.text_area(f"Text input:", height=400, label_visibility="collapsed", placeholder="Enter your input here...")
     if input_:
-        st.subheader("Response from the LLM:")
+        st.write("")
+        st.subheader("Output:")
         decoded_output = get_llm_predictions(input_)
         st.write(decoded_output)
 else:
