@@ -31,35 +31,36 @@ def load_data(llm_selected):
     return tokenizer, model
 
 
-@st.cache_resource
-def get_llm_predictions(utterance: str, llm_selected: str):
-    url = "http://localhost:5999/llm_predict"
+def get_llm_predictions(utterance: str):
+    print(f"Getting response from LLM for the input: {input_}")
+    response = call_studio_handler(utterance)['result']
+    print("Done!")
+    return response
 
+
+@st.cache_resource
+def call_studio_handler(utterance):
+    url = "http://localhost:5999/studio_handler"
     payload = json.dumps({
+        "input_type": config["input_type"],
+        "output_type": config["output_type"],
+        "llm_selected": config["llm_selected"],
         "utterance": utterance,
-        "llm_selected": llm_selected,
     })
     headers = {
         'Content-Type': 'application/json'
     }
-    return requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload).json()
+    print(response)
+    return response
 
 
 if config['input_type'] == "Plain Text" and config['output_type'] == "Plain Text":
     st.subheader(f"Model Selected: ```{config['llm_selected']}```")
-
     input_ = st.text_area("Input", height=300)
-    llm_selected = config['llm_selected']
-
     if input_:
         st.subheader("Response from the LLM:")
-
-        print(f"Getting response from LLM for the input: {input_}")
-        response = get_llm_predictions(input_, llm_selected)
-        print("Done!")
-        print(response.json())
-        decoded_output = response.json()['result']
-
+        decoded_output = get_llm_predictions(input_)
         st.write(decoded_output)
 else:
     st.header("Current Config:")
