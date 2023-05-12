@@ -2,3 +2,6 @@ streamlit~=1.22.0
 transformers~=4.28.1
 urllib3==1.26.15
 watchdog
+awscli
+boto3
+requests
