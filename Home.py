@@ -28,7 +28,7 @@ with st.form("input_form"):
 
         stt_features = st.multiselect("Pick any of the additional features:",
                                       ["Smart Format", "Diarization", "Punctuation", "Topic Detection",
-                                       "Keyword Extraction"])
+                                       "Keyword Extraction"], default=["Smart Format", "Diarization"])
 
     submitted = st.form_submit_button("Validate and Set Input Config")
     if submitted and input_type == 'audio':
