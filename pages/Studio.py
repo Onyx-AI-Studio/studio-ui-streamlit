@@ -9,7 +9,7 @@ import streamlit as st
 import boto3
 
 config = st.session_state['config']
-url = "http://localhost:5999/studio_handler"
+URL = "http://localhost:5999"
 
 st.markdown(f"""<p style='text-align: right; color: rgb(9, 171, 59); font-family: monospace; font-weight: 600; letter-spacing: -0.005em; line-height: 1.2; margin-bottom: 0%;'>
 ({config['llm_selected']})
@@ -39,6 +39,7 @@ def get_llm_predictions(utterance: str):
 
 @st.cache_resource
 def call_studio_handler(utterance: str, llm_selected: str):
+    url = URL + "/studio_handler"
     payload = json.dumps({
         "input_type": config["input_type"],
         "output_type": config["output_type"],
@@ -53,8 +54,18 @@ def call_studio_handler(utterance: str, llm_selected: str):
     return response
 
 
-def deepgram_stt():
-    pass
+def deepgram_stt(conv_id: str, s3_audio_file_path: str):
+    url = URL + "/stt"
+
+    payload = json.dumps({
+        "conversation_id": conv_id,
+        "s3_audio_file_path": s3_audio_file_path,
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    response = requests.request("POST", url, headers=headers, data=payload)
+    return response
 
 
 # st.subheader(f"Model selected: ```{config['llm_selected']}```")
@@ -101,15 +112,10 @@ elif config['input_type'] == "Audio":
 
         st.subheader("Transcript:")
 
-        # TODO: Get transcript from Middleware - Deepgram
-        transcript = "Yeah, as much as it's worth celebrating the first spacewalk with an all-female team, " \
-                     "I think many of us are looking forward to it just being normal. And I think if it signifies " \
-                     "anything, it is to honor the women who came before us who were skilled and qualified and didn't " \
-                     "get the same opportunities that we have today."
+        deepgram_response = deepgram_stt(st.session_state['conv_id'], str(s3_path)).json()
+        transcript = deepgram_response['verbatim']
 
-        deepgram_response = deepgram_stt()
-
-        input_ = st.text_area("Prompt input:", height=300, label_visibility="collapsed", placeholder=transcript, disabled=True)
+        st.write(transcript)
         st.write("")
         st.write("")
 
