@@ -41,24 +41,18 @@ with st.form("llm_form"):
     llm = st.selectbox("Pick any of the available large language models:",
                        ["google/flan-t5-base", "google/flan-t5-large", "bigscience/bloomz-560m",
                         "bigscience/bloomz-1b1", "bigscience/bloomz-3b", "bigscience/bloomz-7b",
-                        "llama-7b", "vicuna-13b", "other"])
+                        "llama-7b", "vicuna-13b", "Any other model from Huggingface.co"])
 
     temp_llm = llm
-    if llm == "other":
-        temp_llm = "other"
+    if llm == "Any other model from Huggingface.co":
+        temp_llm = "Any other model from Huggingface.co"
         llm = st.text_input("LLM name from Huggingface:")
+    # st.write(temp_llm, llm)
 
-    # FIXME: logical flow to handle all scenarios
     submitted = st.form_submit_button("Validate and Set Model Config")
-    if submitted and temp_llm == "other":
-        # st.write("Please specify a valid model!")
-        st.info("Please specify a valid model...!")
-    elif submitted and input_type == "audio":
-        # st.write("Please specify the STT engine!")
-        st.info("Please specify the STT engine!")
-    elif submitted and llm != "other":
-        # and (input_type == "audio" and stt_model != ""):
-        # st.write("Config initialized!")
+    if submitted and str(llm) == "Any other model from Huggingface.co":
+        st.info("Please specify a valid model...")
+    elif submitted and llm != "":
         st.success("Config initialized!")
     else:
         st.write()
