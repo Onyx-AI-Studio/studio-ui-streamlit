@@ -2,7 +2,6 @@ import os
 
 import requests
 import json
-from uuid import uuid4
 from pathlib import Path
 
 import streamlit as st
@@ -54,8 +53,10 @@ def call_studio_handler(utterance: str, llm_selected: str):
     return response
 
 
+@st.cache_resource
 def deepgram_stt(conv_id: str, s3_audio_file_path: str, stt_model: str):
     url = URL + "/stt"
+    print(f'Calling studio_handler at: {url}')
 
     payload = json.dumps({
         "conversation_id": conv_id,
@@ -71,7 +72,6 @@ def deepgram_stt(conv_id: str, s3_audio_file_path: str, stt_model: str):
 
 # st.subheader(f"Model selected: ```{config['llm_selected']}```")
 
-st.session_state['conv_id'] = str(uuid4())
 if config['input_type'] == "Plain Text" and config['output_type'] == "Plain Text":
     prompt_ = st.text_area(f"Text input:", height=400, label_visibility="collapsed",
                            placeholder="Enter your input here...")
@@ -93,7 +93,7 @@ elif config['input_type'] == "Audio":
 
         save_path = Path(save_path, audio_file_.name)
 
-        with open(save_path, mode='xb') as w:
+        with open(save_path, mode='wb') as w:
             w.write(audio_file_.getvalue())
 
         if save_path.exists():

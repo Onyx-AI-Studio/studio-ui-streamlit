@@ -1,5 +1,7 @@
 import streamlit as st
+from uuid import uuid4
 
+st.session_state['conv_id'] = str(uuid4())
 st.title("🎬 Generative AI Studio")
 
 st.header("Initialize System")
