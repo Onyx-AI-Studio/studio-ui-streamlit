@@ -10,10 +10,11 @@ import boto3
 config = st.session_state['config']
 URL = "http://localhost:5999"
 
-st.markdown(f"""<p style='text-align: right; color: rgb(9, 171, 59); font-family: monospace; font-weight: 600; letter-spacing: -0.005em; line-height: 1.2; margin-bottom: 0%;'>
+st.title("Studio UI")
+grey = "#EBDBB2"
+st.markdown(f"""<p style='text-align: right; color: {grey}; font-family: monospace; font-weight: 600; letter-spacing: -0.005em; line-height: 1.2; '>
 ({config['llm_selected']})
 </p>""", unsafe_allow_html=True)
-st.title("Studio")
 
 
 # config = {
