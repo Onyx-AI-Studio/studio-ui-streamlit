@@ -56,7 +56,7 @@ def call_studio_handler(utterance: str, llm_selected: str):
 
 
 @st.cache_resource
-def deepgram_stt(conv_id: str, s3_audio_file_path: str, stt_model: str):
+def deepgram_stt(conv_id: str, s3_audio_file_path: str, stt_model: str, stt_features: []):
     url = URL + "/stt"
     print(f'Calling studio_handler at: {url}')
 
@@ -64,6 +64,7 @@ def deepgram_stt(conv_id: str, s3_audio_file_path: str, stt_model: str):
         "conversation_id": conv_id,
         "s3_audio_file_path": s3_audio_file_path,
         "stt_model": stt_model,
+        "stt_features": stt_features,
     })
     headers = {
         'Content-Type': 'application/json'
@@ -115,7 +116,9 @@ elif config['input_type'] == "Audio":
 
         st.subheader("Transcript:")
 
-        deepgram_response = deepgram_stt(st.session_state['conv_id'], str(s3_path), config['stt_model']).json()
+        deepgram_response = deepgram_stt(st.session_state['conv_id'], str(s3_path), config['stt_model'],
+                                         config['stt_features']).json()
+        print(f'Deepgram response: {deepgram_response}')
         transcript = deepgram_response['verbatim']
 
         st.write(transcript)

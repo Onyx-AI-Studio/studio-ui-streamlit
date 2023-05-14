@@ -28,9 +28,9 @@ with st.form("input_form"):
 
         # 'Smart Format' - "Punctuation", "Numerals", "Paragraphs", "Dates", "Times", "Alphanumerics"
         stt_features = st.multiselect("Pick any of the additional features:",
-                                      ["Smart Format", "Diarization",
-                                       "Summarization", "Topic Detection", "Keyword Extraction",
-                                       "Punctuation", "Numerals", "Paragraphs", "Dates", "Times", "Alphanumerics",
+                                      ["Smart Format", "Diarize",
+                                       "Summarize", "Detect Topics", "Profanity Filter",
+                                       "Punctuate", "Numerals", "Paragraphs", "Dates", "Times", "Alphanumerics",
                                        ],
                                       default=[])
 
