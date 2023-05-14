@@ -10,11 +10,12 @@ import boto3
 config = st.session_state['config']
 URL = "http://localhost:5999"
 
-st.title("Studio UI")
 grey = "#EBDBB2"
-st.markdown(f"""<p style='text-align: right; color: {grey}; font-family: monospace; font-weight: 600; letter-spacing: -0.005em; line-height: 1.2; '>
-({config['llm_selected']})
-</p>""", unsafe_allow_html=True)
+
+st.title("Studio UI")
+st.write(
+    "The ```Config Initializer``` tab in the sidebar can be used to configure things like input/output type, the machine learning models used, etc.")
+st.write("")
 
 
 # config = {
@@ -128,11 +129,16 @@ elif config['input_type'] == "Audio":
         st.write("")
 
         if prompt_:
-            st.write("")
             st.subheader("Output:")
             llm_input = "Context: " + transcript + "\n\n" + prompt_
             decoded_output = get_llm_predictions(llm_input)
             st.write(decoded_output)
+            st.write("")
+            st.write("")
 else:
     st.header("Current Config:")
     st.write(config)
+
+st.markdown(f"""<p style='text-align: right; color: {grey}; font-family: monospace; font-weight: 600; letter-spacing: -0.005em; line-height: 1.2; margin-top: 0%'>
+({config['llm_selected']})
+</p>""", unsafe_allow_html=True)

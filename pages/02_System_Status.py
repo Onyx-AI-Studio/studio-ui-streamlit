@@ -4,13 +4,14 @@ import streamlit as st
 import boto3
 
 st.title("System Status")
-st.write("This screen displays the status of all the backend services and the current config that is set.")
+st.write("Displays the status of all the backend services and the current config that is set.")
 
 st.write("")
 st.write("")
 
 green = "#36e236"
 red = "#f6310a"
+grey = "#EBDBB2"
 success = "✅"
 fail = "❌"
 
@@ -48,7 +49,7 @@ def display_status(name: str):
 
     if (name == "Middleware" and middleware_health()) or (name == "LLM Service" and llm_health()) or (
             name == "Deepgram" and deepgram_health()) or (name == "AWS" and aws_health()):
-        color = green
+        color = grey
         status_icon = success
     else:
         color = red
@@ -71,6 +72,6 @@ with col2:
 st.write("")
 st.write("")
 
-st.subheader("Current Config:")
+st.subheader("System Parameters")
 config = st.session_state['config']
 st.write(config)

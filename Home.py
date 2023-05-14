@@ -4,6 +4,12 @@ from uuid import uuid4
 st.session_state['conv_id'] = str(uuid4())
 st.title("🎬 Generative AI Studio")
 
+st.write("Generative AI Studio is a .....")
+st.write(
+    "Use the ```System Status``` tab in the sidebar to view the current status of all the backend services and current system parameters.")
+st.write(
+    "Use the ```Config Initializer``` tab in the sidebar to configure various parameters like the input/output type, speech-to-text model, the large language model used, etc.")
+
 # Set default config
 config = {
     'input_type': "Plain Text",

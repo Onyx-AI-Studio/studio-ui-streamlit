@@ -1,6 +1,7 @@
 import streamlit as st
 
 st.title("Initialize System")
+st.write("Configure the Studio UI using the below parameters.")
 with st.form("input_form"):
     st.subheader("Input and Output Configuration")
 
@@ -22,11 +23,16 @@ with st.form("input_form"):
         # TODO:
         #  Add config for the models like tiny or large for Whisper
         #  Add config for Nova - Enhanced
-        stt_model = st.radio("Please select the STT model from Deepgram:", ["Deepgram Nova", "Deepgram Whisper [OpenAI]"])
+        stt_model = st.radio("Please select the STT model from Deepgram:",
+                             ["Deepgram Nova", "Deepgram Whisper [OpenAI]"])
 
+        # 'Smart Format' - "Punctuation", "Numerals", "Paragraphs", "Dates", "Times", "Alphanumerics"
         stt_features = st.multiselect("Pick any of the additional features:",
-                                      ["Smart Format", "Diarization", "Punctuation", "Topic Detection",
-                                       "Keyword Extraction"], default=["Smart Format", "Diarization"])
+                                      ["Smart Format", "Diarization",
+                                       "Summarization", "Topic Detection", "Keyword Extraction",
+                                       "Punctuation", "Numerals", "Paragraphs", "Dates", "Times", "Alphanumerics",
+                                       ],
+                                      default=[])
 
     submitted = st.form_submit_button("Validate and Set Input Config")
     if submitted and input_type == 'audio':
