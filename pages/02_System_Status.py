@@ -1,10 +1,12 @@
+import time
+
 import requests
 
 import streamlit as st
 import boto3
 
 st.title("System Status")
-st.write("Displays the status of all the backend services and the current config that is set.")
+st.write("Displays the status of all the backend services and the current system parameters that are set.")
 
 st.write("")
 st.write("")
@@ -18,20 +20,29 @@ fail = "❌"
 
 def middleware_health():
     url = "http://localhost:5999/healthcheck"
-    response = requests.request("GET", url, headers={}, data={})
-    return True if response.status_code == 200 else False
+    try:
+        response = requests.request("GET", url, headers={}, data={})
+        return True if response.status_code == 200 else False
+    except:
+        return False
 
 
 def llm_health():
     url = "http://localhost:6999/healthcheck"
-    response = requests.request("GET", url, headers={}, data={})
-    return True if response.status_code == 200 else False
+    try:
+        response = requests.request("GET", url, headers={}, data={})
+        return True if response.status_code == 200 else False
+    except:
+        return False
 
 
 def deepgram_health():
     url = "http://localhost:5999/deepgram_healthcheck"
-    response = requests.request("GET", url, headers={}, data={})
-    return True if response.status_code == 200 else False
+    try:
+        response = requests.request("GET", url, headers={}, data={})
+        return True if response.status_code == 200 else False
+    except:
+        return False
 
 
 def aws_health():
@@ -44,11 +55,12 @@ def aws_health():
 
 
 def display_status(name: str):
+    time.sleep(0.75)
     color = green
     status_icon = success
 
     if (name == "Middleware" and middleware_health()) or (name == "LLM Service" and llm_health()) or (
-            name == "Deepgram" and deepgram_health()) or (name == "AWS" and aws_health()):
+            name == "Deepgram" and deepgram_health()) or (name == "AWS Access" and aws_health()):
         color = grey
         status_icon = success
     else:
@@ -61,13 +73,16 @@ def display_status(name: str):
 
 
 # st.header("Services Health:")
-col1, col2 = st.columns(2)
-with col1:
-    display_status("Middleware")
-    display_status("LLM Service")
-with col2:
-    display_status("Deepgram")
-    display_status("AWS")
+with st.spinner("Checking backend APIs..."):
+    col1, col2 = st.columns(2)
+    with col1:
+        display_status("Middleware")
+        display_status("LLM Service")
+    with col2:
+        display_status("Deepgram")
+        display_status("AWS Access")
+
+    time.sleep(1)
 
 st.write("")
 st.write("")
