@@ -67,8 +67,8 @@ def display_status(name: str):
         color = red
         status_icon = fail
 
-    st.markdown(f"""<p style='text-align: left; color: 
-        {color}; font-family: monospace; font-weight: 600; letter-spacing: -0.005em; line-height: 1.2; '> 
+    st.markdown(f"""<p style='text-align: left; 
+        font-family: monospace; font-weight: 600; letter-spacing: -0.005em; line-height: 1.2; '> 
         {status_icon} {name} </p>""", unsafe_allow_html=True)
 
 

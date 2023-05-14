@@ -142,6 +142,6 @@ else:
     st.header("Current Config:")
     st.write(config)
 
-st.markdown(f"""<p style='text-align: right; color: {grey}; font-family: monospace; font-weight: 600; letter-spacing: -0.005em; line-height: 1.2; margin-top: 0%'>
+st.markdown(f"""<p style='text-align: right; font-family: monospace; font-weight: 600; letter-spacing: -0.005em; line-height: 1.2; margin-top: 0%'>
 ({config['llm_selected']})
 </p>""", unsafe_allow_html=True)
