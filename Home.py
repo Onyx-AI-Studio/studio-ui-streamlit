@@ -4,7 +4,8 @@ from uuid import uuid4
 st.session_state['conv_id'] = str(uuid4())
 st.title("🎬 Generative AI Studio")
 
-st.write("Generative AI Studio is a .....")
+# st.write("Generative AI Studio is a .....")
+st.header("Overview")
 st.write(
     "Use the ```System Status``` tab in the sidebar to view the current status of all the backend services and current system parameters.")
 st.write(

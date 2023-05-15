@@ -119,7 +119,13 @@ elif config['input_type'] == "Audio":
         deepgram_response = deepgram_stt(st.session_state['conv_id'], str(s3_path), config['stt_model'],
                                          config['stt_features']).json()
         print(f'Deepgram response: {deepgram_response}')
-        transcript = deepgram_response['verbatim']
+
+        if 'Diarize' in list(config['stt_features']):
+            print("Printing transcript!")
+            transcript = deepgram_response['transcript']
+        else:
+            print("Printing verbatim transcript!")
+            transcript = deepgram_response['verbatim']
 
         st.write(transcript)
         st.write("")

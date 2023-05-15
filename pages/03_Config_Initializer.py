@@ -32,7 +32,7 @@ with st.form("input_form"):
                                        "Summarize", "Detect Topics", "Profanity Filter",
                                        "Punctuate", "Numerals", "Paragraphs", "Dates", "Times", "Alphanumerics",
                                        ],
-                                      default=[])
+                                      default=["Smart Format"])
 
     submitted = st.form_submit_button("Validate and Set Input Config")
     if submitted and input_type == 'audio':
