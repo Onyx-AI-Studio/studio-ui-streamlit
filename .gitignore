@@ -1,3 +1,5 @@
 .idea/
 .DS_Store
 audio_files/*
+text_files/*
+pdf_files/*
