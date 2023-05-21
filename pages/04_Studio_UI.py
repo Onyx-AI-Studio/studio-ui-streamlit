@@ -8,7 +8,7 @@ import streamlit as st
 import boto3
 
 config = st.session_state['config']
-URL = "http://localhost:5999"
+MD_URL = "http://localhost:5999"
 
 grey = "#EBDBB2"
 
@@ -40,7 +40,7 @@ def get_llm_predictions(utterance: str):
 
 @st.cache_resource
 def call_studio_handler(utterance: str, llm_selected: str):
-    url = URL + "/studio_handler"
+    url = MD_URL + "/studio_handler"
     payload = json.dumps({
         "input_type": config["input_type"],
         "output_type": config["output_type"],
@@ -57,7 +57,7 @@ def call_studio_handler(utterance: str, llm_selected: str):
 
 @st.cache_resource
 def deepgram_stt(conv_id: str, s3_audio_file_path: str, stt_model: str, stt_features: []):
-    url = URL + "/stt"
+    url = MD_URL + "/stt"
     print(f'Calling studio_handler at: {url}')
 
     payload = json.dumps({
@@ -74,6 +74,32 @@ def deepgram_stt(conv_id: str, s3_audio_file_path: str, stt_model: str, stt_feat
 
 
 # st.subheader(f"Model selected: ```{config['llm_selected']}```")
+
+def upload_to_s3(local_save_path: Path, file_type: str, file_name: str):
+    s3 = boto3.resource("s3")
+
+    # Upload a new file
+    data = open(local_save_path, 'rb')
+    s3_path = f'{file_type}_files/' + st.session_state['conv_id'] + '_' + file_name
+    s3.Bucket('onyx-test-001').put_object(Key=s3_path, Body=data)
+    st.success(f'File {file_name} is successfully uploaded to AWS S3!')
+    return s3_path
+
+
+def build_indices(s3_file_path: str):
+    url = MD_URL + "/build_indices"
+    print(f'Calling studio_handler at: {url}')
+
+    payload = json.dumps({
+        "conversation_id": st.session_state['conv_id'],
+        "s3_file_path": s3_file_path,
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    response = requests.request("POST", url, headers=headers, data=payload).json()
+    return response
+
 
 if config['input_type'] == "Plain Text" and config['output_type'] == "Plain Text":
     prompt_ = st.text_area(f"Text input:", height=400, label_visibility="collapsed",
@@ -102,13 +128,7 @@ elif config['input_type'] == "Audio":
         if save_path.exists():
             print(f'File {audio_file_.name} is successfully saved!')
 
-        s3 = boto3.resource("s3")
-
-        # Upload a new file
-        data = open(save_path, 'rb')
-        s3_path = 'audio_files/' + st.session_state['conv_id'] + '_' + audio_file_.name
-        s3.Bucket('onyx-test-001').put_object(Key=s3_path, Body=data)
-        st.success(f'File {audio_file_.name} is successfully uploaded to AWS S3!')
+        s3_path = upload_to_s3(local_save_path=save_path, file_type="audio", file_name=audio_file_.name)
 
         st.audio(audio_file_)
         st.write("")
@@ -144,7 +164,55 @@ elif config['input_type'] == "Audio":
             st.write(decoded_output)
             st.write("")
             st.write("")
+elif config['input_type'] == "PDF":
+    pdf_file_ = st.file_uploader("PDF File Upload", type=["pdf"],
+                                 help="Upload a file of the allowed formats to process")
+
+    if pdf_file_:
+        # Save uploaded file
+        save_folder = '/Users/snehalyelmati/Documents/studio-ui-streamlit/pdf_files'
+        save_path = Path(save_folder, st.session_state['conv_id'])
+        if not os.path.exists(save_path):
+            os.makedirs(save_path)
+
+        save_path = Path(save_path, pdf_file_.name)
+
+        with open(save_path, mode='wb') as w:
+            w.write(pdf_file_.getvalue())
+
+        if save_path.exists():
+            print(f'File {pdf_file_.name} is successfully saved!')
+
+        s3_path = upload_to_s3(local_save_path=save_path, file_type="pdf", file_name=pdf_file_.name)
+
+        st.write("")
+        st.write("")
+        # st.subheader("Content Preview:")
+        # contents = Path(save_path).read_text()
+        # limit = 1000
+        # st.write(contents[:len(contents) if len(contents) < limit else limit])
+        # st.write("")
+        # st.write("")
+
+        # call the LLM service through the MD service to build index
+        response = build_indices(s3_path)
+        st.write(f"Building indices: ```{response['result']}```")
+
+        # call the LLM service through the MD service to get answers for the context built for the conv_id
+        # st.subheader("Prompt:")
+        # prompt_ = st.text_area(f"Text input:", height=150, label_visibility="collapsed",
+        #                        placeholder="Enter your prompt here...")
+        # st.write("")
+        #
+        # if prompt_:
+        #     st.subheader("Output:")
+        #     llm_input = "Context: " + contents + "\n\n" + prompt_
+        #     decoded_output = get_llm_predictions(llm_input)
+        #     st.write(decoded_output)
+        #     st.write("")
+        #     st.write("")
 else:
+    st.write("This combination of input/output is work in progress for now...")
     st.header("Current Config:")
     st.write(config)
 
