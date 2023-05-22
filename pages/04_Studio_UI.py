@@ -86,6 +86,7 @@ def upload_to_s3(local_save_path: Path, file_type: str, file_name: str):
     return s3_path
 
 
+@st.cache_resource
 def build_indices(s3_file_path: str):
     url = MD_URL + "/build_indices"
     print(f'Calling studio_handler at: {url}')
@@ -93,6 +94,22 @@ def build_indices(s3_file_path: str):
     payload = json.dumps({
         "conversation_id": st.session_state['conv_id'],
         "s3_file_path": s3_file_path,
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+    response = requests.request("POST", url, headers=headers, data=payload).json()
+    return response
+
+
+def get_answer_from_pdf(query: str):
+    url = MD_URL + "/get_answer_from_pdf"
+    print(f'Calling studio_handler at: {url}')
+
+    payload = json.dumps({
+        "conversation_id": st.session_state['conv_id'],
+        "query": query,
+        "llm_selected": config['llm_selected'],
     })
     headers = {
         'Content-Type': 'application/json'
@@ -195,22 +212,27 @@ elif config['input_type'] == "PDF":
         # st.write("")
 
         # call the LLM service through the MD service to build index
-        response = build_indices(s3_path)
-        st.write(f"Building indices: ```{response['result']}```")
+        index_status = build_indices(s3_path)
+        st.write(f"Building indices: ```{index_status['result']}```")
 
         # call the LLM service through the MD service to get answers for the context built for the conv_id
-        # st.subheader("Prompt:")
-        # prompt_ = st.text_area(f"Text input:", height=150, label_visibility="collapsed",
-        #                        placeholder="Enter your prompt here...")
-        # st.write("")
-        #
-        # if prompt_:
-        #     st.subheader("Output:")
-        #     llm_input = "Context: " + contents + "\n\n" + prompt_
-        #     decoded_output = get_llm_predictions(llm_input)
-        #     st.write(decoded_output)
-        #     st.write("")
-        #     st.write("")
+        st.subheader("Question:")
+        question_ = st.text_input(f"Text input:", label_visibility="collapsed",
+                                  placeholder="Enter your question here...")
+        st.write("")
+
+        if question_:
+            st.subheader("Answer:")
+            response = get_answer_from_pdf(query=question_)
+            st.write(response['result'])
+            st.write("")
+            st.write("")
+
+            st.subheader("Source Documents:")
+            st.write(response['source_docs'])
+            st.write("")
+            st.write("")
+
 else:
     st.write("This combination of input/output is work in progress for now...")
     st.header("Current Config:")
