@@ -1,3 +1,4 @@
+import base64
 import os
 
 import requests
@@ -118,6 +119,19 @@ def get_answer_from_pdf(query: str):
     return response
 
 
+def displayPDF(file):
+    # Opening file from file path
+    with open(file, "rb") as f:
+        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
+
+    # Embedding PDF in HTML
+    pdf_display = F'<embed src="data:application/pdf;base64,{base64_pdf}" width="100%" height="400" type="application/pdf">'
+    # pdf_display = F'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="400" type="application/pdf"></iframe>'
+
+    # Displaying File
+    st.markdown(pdf_display, unsafe_allow_html=True)
+
+
 if config['input_type'] == "Plain Text" and config['output_type'] == "Plain Text":
     prompt_ = st.text_area(f"Text input:", height=400, label_visibility="collapsed",
                            placeholder="Enter your input here...")
@@ -204,16 +218,16 @@ elif config['input_type'] == "PDF":
 
         st.write("")
         st.write("")
-        # st.subheader("Content Preview:")
-        # contents = Path(save_path).read_text()
-        # limit = 1000
-        # st.write(contents[:len(contents) if len(contents) < limit else limit])
-        # st.write("")
-        # st.write("")
+
+        st.subheader("Content Preview:")
+        displayPDF(save_path)
+
+        st.write("")
+        st.write("")
 
         # call the LLM service through the MD service to build index
         index_status = build_indices(s3_path)
-        st.write(f"Building indices: ```{index_status['result']}```")
+        # st.write(f"Building indices: ```{index_status['result']}```")
 
         # call the LLM service through the MD service to get answers for the context built for the conv_id
         st.subheader("Question:")
