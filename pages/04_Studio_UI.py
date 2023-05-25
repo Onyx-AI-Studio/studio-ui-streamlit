@@ -237,7 +237,8 @@ elif config['input_type'] == "PDF":
 
         if question_:
             st.subheader("Answer:")
-            response = get_answer_from_pdf(query=question_)
+            with st.spinner("Searching the PDF for relevant information..."):
+                response = get_answer_from_pdf(query=question_)
             st.write(response['result'])
             st.write("")
             st.write("")
